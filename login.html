@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Acceso</title>
+  <link rel="icon" href="img/favicon.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="nav-left">
+        <img src="img/logo.png" alt="Logo" class="logo" />
+        <a href="index.html">Inicio</a>
+        <a href="nosotros.html">Nosotros</a>
+        <a href="servicios.html">Servicios</a>
+        <a href="contacto.html">Contacto</a>
+      </div>
+      <div class="nav-right">
+        <a href="login.html" class="login-btn">Iniciar Sesión</a>
+      </div>
+    </nav>
+  </header>
+
+  <main
+    style="
+      background-image: url('img/fondo-login.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    "
+  >
+    <div class="login-form">
+      <h2>Accede a tu área privada</h2>
+      <input type="email" id="email" placeholder="Correo electrónico" />
+      <input type="password" id="password" placeholder="Contraseña" />
+      <button onclick="login()">Entrar</button>
+      <p id="error" class="error-text"></p>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2025 Cuentas.info. Todos los derechos reservados.</p>
+  </footer>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+
+  <script>
+    // Configuración Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyB4p7_BVrZYcydv1NlvKFXHJbIADJpsf1w",
+      authDomain: "cuentas-6184d.firebaseapp.com",
+      projectId: "cuentas-6184d",
+    };
+
+    // Inicializar Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    function login() {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      if (!email || !password) {
+        document.getElementById("error").innerText = "Por favor, completa todos los campos.";
+        return;
+      }
+
+      firebase
+        .auth()
+        .signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          // Guardamos el email (que usas como NIF) en sessionStorage para usar después
+          sessionStorage.setItem("nif", email);
+          // Redirigimos a la página privada del cliente
+          window.location.href = "cliente.html";
+        })
+        .catch((error) => {
+          document.getElementById("error").innerText = "Credenciales incorrectas.";
+          console.error(error);
+        });
+    }
+  </script>
+</body>
+</html>

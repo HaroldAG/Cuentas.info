@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Área Cliente</title>
+  <link rel="icon" href="img/favicon.png" type="image/png" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    table {
+      width: 80%;
+      margin: 2rem auto;
+      border-collapse: collapse;
+      font-family: 'Quicksand', sans-serif;
+    }
+    th, td {
+      padding: 12px;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+    th {
+      background-color: #0a3953;
+      color: white;
+    }
+    h2 {
+      text-align: center;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="nav-left">
+        <img src="img/logo.png" alt="Logo" class="logo" />
+        <a href="index.html">Inicio</a>
+        <a href="nosotros.html">Nosotros</a>
+        <a href="servicios.html">Servicios</a>
+        <a href="contacto.html">Contacto</a>
+      </div>
+      <div class="nav-right">
+        <a href="login.html" class="login-btn">Cerrar sesión</a>
+      </div>
+    </nav>
+  </header>
+
+<main>
+  <h2 style="text-align:center; font-size: 2rem; margin-top: 2rem; font-weight: 600; color: #0a3953;">
+    Resumen Financiero
+  </h2>
+  <div id="data-container"></div>
+</main>
+
+
+  <footer>
+    <p>© 2025 Cuentas.info. Todos los derechos reservados.</p>
+  </footer>
+
+  <script>
+    const nif = sessionStorage.getItem("nif");
+    const nifSolo = nif?.split("@")[0]; // Extrae "48712762G" de "48712762G@gmail.com"
+
+    if (!nifSolo) {
+      document.getElementById("data-container").innerHTML = "<p style='text-align:center;'>No se pudo obtener el NIF del usuario.</p>";
+    } else {
+      fetch(`https://script.google.com/macros/s/AKfycbyz9T72aVYyNsm3fGVWEEeBKSWHm3lnzTkwZzhvJLkWzlOk3WB4n_13gnz1x1_K4ZDw/exec?nif=${nifSolo}`) // <-- Sustituye WEB_APP_ID
+        .then(res => res.json())
+        .then(data => {
+          if (!data || data.length < 2) {
+            document.getElementById("data-container").innerHTML = "<p style='text-align:center;'>No hay datos disponibles para tu NIF.</p>";
+            return;
+          }
+
+          const [headers, ...rows] = data;
+          let html = "<table><thead><tr>";
+          headers.forEach(header => {
+            html += `<th>${header}</th>`;
+          });
+          html += "</tr></thead><tbody>";
+          rows.forEach(row => {
+            html += "<tr>";
+            row.forEach(cell => {
+              html += `<td>${cell}</td>`;
+            });
+            html += "</tr>";
+          });
+          html += "</tbody></table>";
+          document.getElementById("data-container").innerHTML = html;
+        })
+        .catch(err => {
+          console.error(err);
+          document.getElementById("data-container").innerHTML = "<p style='text-align:center;'>Error al cargar los datos.</p>";
+        });
+    }
+  </script>
+</body>
+</html>
